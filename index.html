@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ИнфоЛаб — Основы работы с информацией</title>
+<style>
+:root{
+  --bg:#0f1115; --surface:#171a21; --surface-2:#1e222b;
+  --text:#e6e8ee; --muted:#9aa3b2;
+  --accent:#5b8cff; --accent-soft:#2a3550;
+  --success:#4ade80; --danger:#f87171;
+  --radius:12px;
+  --font: system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--font);line-height:1.5;min-height:100vh}
+.app-header{display:flex;align-items:center;gap:20px;padding:14px 24px;background:var(--surface);border-bottom:1px solid #232735;position:sticky;top:0;z-index:10;flex-wrap:wrap}
+.logo{font-weight:700;font-size:18px}
+.tabs{display:flex;gap:4px;flex-wrap:wrap}
+.tabs button{background:transparent;border:none;color:var(--muted);padding:8px 14px;border-radius:8px;cursor:pointer;font-size:15px;transition:.2s;font-family:inherit}
+.tabs button:hover{color:var(--text);background:var(--surface-2)}
+.tabs button.active{color:var(--text);background:var(--accent-soft)}
+.xp-badge{margin-left:auto;background:var(--accent-soft);padding:6px 12px;border-radius:999px;font-weight:600;font-size:14px}
+main{padding:32px 24px;max-width:1100px;margin:0 auto}
+h1,h2,h3{line-height:1.25;margin-bottom:12px}
+h2{font-size:22px}
+h3{font-size:17px}
+p{color:var(--text);margin-bottom:10px}
+.muted{color:var(--muted)}
+
+/* Карточки модулей */
+.practice-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:20px;margin-top:16px}
+.practice-card{background:var(--surface);border:1px solid #232735;border-radius:var(--radius);padding:20px;display:flex;flex-direction:column;gap:10px;transition:.2s}
+.practice-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.practice-card .icon{font-size:32px}
+.practice-card .btn-start{margin-top:auto;background:var(--accent);border:none;color:#fff;padding:10px;border-radius:8px;cursor:pointer;font-weight:600;font-family:inherit;font-size:15px}
+.btn{background:var(--accent);border:none;color:#fff;padding:10px 18px;border-radius:8px;cursor:pointer;font-weight:600;font-family:inherit;font-size:15px}
+.btn:hover{filter:brightness(1.1)}
+.btn-ghost{background:transparent;border:1px solid #2a3140;color:var(--text)}
+
+/* Теория */
+.theory-module{background:var(--surface);border:1px solid #232735;border-radius:var(--radius);padding:22px;margin-bottom:20px}
+.module-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px}
+.badge-done{background:rgba(74,222,128,.15);color:var(--success);padding:4px 10px;border-radius:999px;font-size:13px}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;margin-bottom:16px}
+.flip-card{perspective:1000px;height:150px;cursor:pointer}
+.flip-inner{position:relative;width:100%;height:100%;transition:transform .6s;transform-style:preserve-3d}
+.flip-card.flipped .flip-inner{transform:rotateY(180deg)}
+.flip-front,.flip-back{position:absolute;inset:0;backface-visibility:hidden;border-radius:12px;padding:14px;display:flex;align-items:center;justify-content:center;text-align:center;border:1px solid #232735}
+.flip-front{background:var(--surface-2);font-weight:600}
+.flip-back{background:var(--accent-soft);transform:rotateY(180deg);font-size:14px}
+
+/* Практика - тренажёр */
+.trainer,.detective{background:var(--surface);border:1px solid #232735;border-radius:var(--radius);padding:22px;margin-top:20px}
+.task-text{font-size:17px;margin:10px 0 16px}
+#query-input{width:100%;padding:12px 14px;background:var(--surface-2);border:1px solid #2a3140;border-radius:8px;color:var(--text);font-family:inherit;font-size:15px;margin-bottom:10px}
+#query-input:focus{outline:none;border-color:var(--accent)}
+.hints{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;font-size:13px;color:var(--muted)}
+.hints code{background:var(--surface-2);padding:2px 8px;border-radius:6px;color:var(--accent)}
+.result{margin-top:16px;padding:16px;background:var(--surface-2);border-radius:8px}
+.score-big{font-size:32px;font-weight:700;color:var(--accent);margin-bottom:10px}
+.result ul{list-style:none}
+.result li{padding:3px 0;font-size:14px}
+.hint{margin-top:10px;font-size:14px;color:var(--muted)}
+.hint code{background:var(--bg);padding:2px 8px;border-radius:6px;color:var(--accent)}
+
+/* Детектив - drag&drop */
+.sources{list-style:none;margin:14px 0}
+.sources li{background:var(--surface-2);border:1px solid #2a3140;border-radius:8px;padding:12px 14px;margin-bottom:8px;cursor:grab;transition:.15s}
+.sources li:hover{border-color:var(--accent)}
+.sources li.dragging{opacity:.4}
+.src-title{font-weight:600;font-size:15px;margin-bottom:4px}
+.src-meta{font-size:13px;color:var(--muted)}
+
+/* Тосты */
+.toast{position:fixed;bottom:24px;right:24px;background:var(--accent);color:#fff;padding:12px 18px;border-radius:8px;animation:slideUp .3s;z-index:100;font-weight:600}
+@keyframes slideUp{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
+
+/* Профиль */
+.profile-card{background:var(--surface);border:1px solid #232735;border-radius:var(--radius);padding:24px;margin-bottom:20px}
+.level-bar{height:10px;background:var(--surface-2);border-radius:5px;overflow:hidden;margin:10px 0}
+.level-bar>div{height:100%;background:linear-gradient(90deg,var(--accent),#8b5bff);transition:width .5s}
+
+.home-hero{background:var(--surface);border:1px solid #232735;border-radius:var(--radius);padding:32px;margin-bottom:20px}
+.home-hero h1{font-size:28px;margin-bottom:8px}
+</style>
+</head>
+<body>
+
+<header class="app-header">
+  <div class="logo">🧠 ИнфоЛаб</div>
+  <nav class="tabs">
+    <button data-view="home">Главная</button>
+    <button data-view="theory">Теория</button>
+    <button data-view="practice">Практика</button>
+    <button data-view="profile">Профиль</button>
+  </nav>
+  <div class="xp-badge">XP: <span id="xp-value">0</span></div>
+</header>
+
+<main id="app"></main>
+
+<script>
+/* ==================== ДАННЫЕ ==================== */
+
+const THEORY_DATA = {
+  modules: [
+    {
+      id: 'm1',
+      title: 'Что такое информация и её свойства',
+      cards: [
+        { term: 'Информация', definition: 'Сведения об объектах и явлениях, уменьшающие неопределённость.' },
+        { term: 'Данные', definition: 'Сырые факты без контекста. Становятся информацией после интерпретации.' },
+        { term: 'Релевантность', definition: 'Соответствие информации текущей задаче.' },
+        { term: 'Достоверность', definition: 'Свойство отражать реальное положение дел без искажений.' },
+      ]
+    },
+    {
+      id: 'm2',
+      title: 'Источники информации',
+      cards: [
+        { term: 'Первичный источник', definition: 'Оригинал: научная статья, документация, патент, отчёт.' },
+        { term: 'Вторичный источник', definition: 'Обзор, учебник, статья в энциклопедии — интерпретация первичных.' },
+        { term: 'Третичный источник', definition: 'Справочники, каталоги, базы данных — навигация по вторичным.' },
+        { term: 'Peer-review', definition: 'Рецензирование: проверка работы независимыми экспертами до публикации.' },
+      ]
+    },
+  ]
+};
+
+const QUIZZES = {
+  m1: [
+    { q: 'Что превращает данные в информацию?', options: ['Объём', 'Контекст и интерпретация', 'Формат файла'], correct: 1 },
+    { q: 'Какое свойство означает соответствие задаче?', options: ['Достоверность', 'Полнота', 'Релевантность'], correct: 2 },
+  ],
+  m2: [
+    { q: 'Что относится к первичным источникам?', options: ['Учебник', 'Научная статья', 'Энциклопедия'], correct: 1 },
+    { q: 'Что такое peer-review?', options: ['Проверка экспертами', 'Публикация в блоге', 'Цитирование'], correct: 0 },
+  ]
+};
+
+const SEARCH_TASKS = [
+  {
+    task: 'Найди официальную документацию по Python 3.12 только на сайте python.org',
+    keywords: ['python', '3.12'],
+    operators: ['site:'],
+    forbidden: ['скачать', 'бесплатно', 'торрент'],
+    idealQuery: 'python 3.12 site:python.org'
+  },
+  {
+    task: 'Найди PDF-версию спецификации RFC 2616 (HTTP/1.1)',
+    keywords: ['rfc', '2616'],
+    operators: ['filetype:'],
+    forbidden: [],
+    idealQuery: 'rfc 2616 filetype:pdf'
+  },
+  {
+    task: 'Найди обсуждения ошибки "segmentation fault" именно на stackoverflow.com',
+    keywords: ['segmentation fault'],
+    operators: ['site:'],
+    forbidden: ['форум', 'блог'],
+    idealQuery: '"segmentation fault" site:stackoverflow.com'
+  },
+];
+
+const SOURCE_SETS = [
+  {
+    topic: 'Влияние микросервисов на архитектуру',
+    correctOrder: ['s2', 's1', 's4', 's3'],
+    sources: [
+      { id: 's1', title: 'Обзорная статья в блоге компании', meta: '2023, автор — техдиректор, без рецензирования' },
+      { id: 's2', title: 'Научная статья в IEEE', meta: '2022, рецензируемая, 45 цитирований' },
+      { id: 's3', title: 'Пост в соцсети', meta: '2024, анонимный автор, без источников' },
+      { id: 's4', title: 'Документация AWS', meta: '2024, официальный вендор, регулярно обновляется' },
+    ]
+  },
+  {
+    topic: 'Безопасность паролей',
+    correctOrder: ['s1', 's3', 's2', 's4'],
+    sources: [
+      { id: 's1', title: 'Рекомендации NIST SP 800-63B', meta: 'Официальный стандарт, 2024' },
+      { id: 's2', title: 'Статья на Medium', meta: '2023, без ссылок на источники' },
+      { id: 's3', title: 'Исследование в журнале ACM', meta: '2022, рецензируемое' },
+      { id: 's4', title: 'Комментарий на Reddit', meta: '2024, анонимно' },
+    ]
+  },
+];
+
+/* ==================== STORAGE ==================== */
+
+const Storage = {
+  KEY: 'infalab_v1_state',
+  defaultState() {
+    return { xp: 0, theory: {}, practice: {}, badges: [], createdAt: Date.now() };
+  },
+  load() {
+    try {
+      const raw = localStorage.getItem(this.KEY);
+      return raw ? JSON.parse(raw) : this.defaultState();
+    } catch { return this.defaultState(); }
+  },
+  save(s) { localStorage.setItem(this.KEY, JSON.stringify(s)); },
+  update(patch) { const s = this.load(); const n = { ...s, ...patch }; this.save(n); return n; },
+  reset() { localStorage.removeItem(this.KEY); }
+};
+
+/* ==================== PROGRESS ==================== */
+
+const Progress = {
+  LEVELS: [
+    { name: 'Новичок', xp: 0 },
+    { name: 'Аналитик', xp: 200 },
+    { name: 'Исследователь', xp: 500 },
+    { name: 'Инфо-инженер', xp: 1000 },
+  ],
+  addXP(amount, reason = '') {
+    if (amount <= 0) return;
+    const s = Storage.load();
+    s.xp += amount;
+    Storage.save(s);
+    this.updateBadge();
+    this.toast(`+${amount} XP${reason ? ' — ' + reason : ''}`);
+  },
+  levelInfo(xp) {
+    let idx = 0;
+    this.LEVELS.forEach((l, i) => { if (xp >= l.xp) idx = i; });
+    const current = this.LEVELS[idx];
+    const next = this.LEVELS[idx + 1] || null;
+    const progress = next
+      ? Math.round(((xp - current.xp) / (next.xp - current.xp)) * 100)
+      : 100;
+    return { current, next, progress, index: idx };
+  },
+  updateBadge() {
+    const s = Storage.load();
+    const el = document.getElementById('xp-value');
+    if (el) el.textContent = s.xp;
+  },
+  toast(text) {
+    const t = document.createElement('div');
+    t.className = 'toast';
+    t.textContent = text;
+    document.body.appendChild(t);
+    setTimeout(() => t.remove(), 2400);
+  }
+};
+
+/* ==================== ВИДЫ ==================== */
+
+const HomeView = {
+  render() {
+    const s = Storage.load();
+    const lvl = Progress.levelInfo(s.xp);
+    const theoryDone = Object.values(s.theory).filter(x => x.read).length;
+    const practiceDone = Object.keys(s.practice).length;
+    return `
+      <div class="home-hero">
+        <h1>Добро пожаловать в ИнфоЛаб</h1>
+        <p class="muted">Интерактивный тренажёр по дисциплине «Основы работы с информацией».</p>
+        <p style="margin-top:14px">Уровень: <b>${lvl.current.name}</b> · ${s.xp} XP</p>
+      </div>
+      <div class="practice-grid">
+        <div class="practice-card">
+          <div class="icon">📖</div>
+          <h3>Теория</h3>
+          <p class="muted">Изучено модулей: ${theoryDone} / ${THEORY_DATA.modules.length}</p>
+          <button class="btn-start" onclick="App.navigate('theory')">Открыть</button>
+        </div>
+        <div class="practice-card">
+          <div class="icon">🧪</div>
+          <h3>Практика</h3>
+          <p class="muted">Пройдено модулей: ${practiceDone}</p>
+          <button class="btn-start" onclick="App.navigate('practice')">Открыть</button>
+        </div>
+        <div class="practice-card">
+          <div class="icon">👤</div>
+          <h3>Профиль</h3>
+          <p class="muted">Прогресс, бейджи, экспорт</p>
+          <button class="btn-start" onclick="App.navigate('profile')">Открыть</button>
+        </div>
+      </div>
+    `;
+  }
+};
+
+const TheoryView = {
+  render() {
+    const s = Storage.load();
+    const modules = THEORY_DATA.modules.map(m => {
+      const done = s.theory[m.id]?.read;
+      return `
+        <section class="theory-module" data-id="${m.id}">
+          <div class="module-head">
+            <h2>${m.title}</h2>
+            ${done ? '<span class="badge-done">✓ изучено</span>' : ''}
+          </div>
+          <div class="cards">
+            ${m.cards.map(c => `
+              <div class="flip-card">
+                <div class="flip-inner">
+                  <div class="flip-front">${c.term}</div>
+                  <div class="flip-back">${c.definition}</div>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+          <button class="btn" data-quiz="${m.id}">Пройти мини-квиз</button>
+          <div class="quiz-zone" data-zone="${m.id}"></div>
+        </section>
+      `;
+    }).join('');
+    return `<h1>Теория</h1><p class="muted" style="margin-bottom:20px">Кликай по карточкам, чтобы перевернуть. После изучения — пройди квиз.</p>${modules}`;
+  },
+  bind() {
+    // Флип-карточки
+    document.querySelectorAll('.flip-card').forEach(c => {
+      c.addEventListener('click', () => c.classList.toggle('flipped'));
+    });
+    // Квизы
+    document.querySelectorAll('[data-quiz]').forEach(btn => {
+      btn.addEventListener('click', () => this.openQuiz(btn.dataset.quiz));
+    });
+    // Автоотметка прочтения через 20 секунд на модуле
+    document.querySelectorAll('.theory-module').forEach(mod => {
+      const id = mod.dataset.id;
+      const timer = setTimeout(() => {
+        const s = Storage.load();
+        s.theory[id] = { ...(s.theory[id] || {}), read: true };
+        Storage.save(s);
+        // Обновим бейдж, если его нет
+        if (!mod.querySelector('.badge-done')) {
+          const span = document.createElement('span');
+          span.className = 'badge-done';
+          span.textContent = '✓ изучено';
+          mod.querySelector('.module-head').appendChild(span);
+        }
+      }, 20000);
+      // Если пользователь ушёл раньше — сбрасываем
+      mod.addEventListener('mouseleave', () => clearTimeout(timer), { once: true });
+    });
+  },
+  openQuiz(id) {
+    const zone = document.querySelector(`[data-zone="${id}"]`);
+    const quiz = QUIZZES[id] || [];
+    if (!quiz.length) return;
+    zone.innerHTML = `
+      <div class="trainer">
+        <h3>Мини-квиз</h3>
+        ${quiz.map((q, qi) => `
+          <div style="margin:14px 0" data-q="${qi}">
+            <p><b>${qi + 1}. ${q.q}</b></p>
+            ${q.options.map((o, oi) => `
+              <label style="display:block;padding:8px;cursor:pointer">
+                <input type="radio" name="q${id}_${qi}" value="${oi}"> ${o}
+              </label>
+            `).join('')}
+          </div>
+        `).join('')}
+        <button class="btn" id="quiz-submit-${id}">Проверить</button>
+        <div id="quiz-result-${id}"></div>
+      </div>
+    `;
+    document.getElementById(`quiz-submit-${id}`).addEventListener('click', () => {
+      let correct = 0;
+      quiz.forEach((q, qi) => {
+        const sel = document.querySelector(`input[name="q${id}_${qi}"]:checked`);
+        if (sel && +sel.value === q.correct) correct++;
+      });
+      const score = Math.round((correct / quiz.length) * 100);
+      document.getElementById(`quiz-result-${id}`).innerHTML = `
+        <div class="result">
+          <div class="score-big">${score}%</div>
+          <p>Правильно: ${correct} из ${quiz.length}</p>
+        </div>
+      `;
+      const s = Storage.load();
+      s.theory[id] = { ...(s.theory[id] || {}), read: true, quizScore: Math.max(s.theory[id]?.quizScore || 0, score) };
+      Storage.save(s);
+      Progress.addXP(Math.round(score / 10), 'Квиз по теории');
+    });
+  }
+};
+
+const PracticeView = {
+  modules: [
+    { id: 'search',    icon: '🔍', title: 'Поисковый тренажёр',   desc: 'Строй запросы с операторами' },
+    { id: 'detective', icon: '🕵️', title: 'Детектив источников', desc: 'Оцени надёжность источников' },
+  ],
+  render() {
+    const s = Storage.load();
+    return `
+      <h1>Практика</h1>
+      <p class="muted" style="margin-bottom:20px">Интерактивные задания. Прогресс сохраняется автоматически.</p>
+      <div class="practice-grid">
+        ${this.modules.map(m => {
+          const score = s.practice[m.id]?.score;
+          return `
+            <div class="practice-card">
+              <div class="icon">${m.icon}</div>
+              <h3>${m.title}</h3>
+              <p class="muted">${m.desc}</p>
+              ${score != null
+                ? `<div class="muted">Лучший результат: <b style="color:var(--success)">${score}%</b></div>`
+                : `<div class="muted">Не начато</div>`}
+              <button class="btn-start" data-launch="${m.id}">Начать</button>
+            </div>
+          `;
+        }).join('')}
+      </div>
+      <div id="practice-stage"></div>
+    `;
+  },
+  bind() {
+    document.querySelectorAll('[data-launch]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.dataset.launch;
+        const stage = document.getElementById('practice-stage');
+        if (id === 'search') SearchTrainer.render(stage);
+        if (id === 'detective') SourceDetective.render(stage);
+        stage.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    });
+  }
+};
+
+const ProfileView = {
+  render() {
+    const s = Storage.load();
+    const lvl = Progress.levelInfo(s.xp);
+    const theoryCount = Object.values(s.theory).filter(x => x.read).length;
+    const practiceCount = Object.keys(s.practice).length;
+    return `
+      <h1>Профиль</h1>
+      <div class="profile-card">
+        <h2>${lvl.current.name}</h2>
+        <p class="muted">${s.xp} XP ${lvl.next ? `· до «${lvl.next.name}» ещё ${lvl.next.xp - s.xp} XP` : '· максимальный уровень'}</p>
+        <div class="level-bar"><div style="width:${lvl.progress}%"></div></div>
+        <p class="muted">Прогресс до следующего уровня: ${lvl.progress}%</p>
+      </div>
+      <div class="profile-card">
+        <h3>Статистика</h3>
+        <p>📖 Изучено модулей теории: <b>${theoryCount} / ${THEORY_DATA.modules.length}</b></p>
+        <p>🧪 Пройдено практик: <b>${practiceCount}</b></p>
+      </div>
+      <div class="profile-card">
+        <h3>Экспорт / импорт прогресса</h3>
+        <p class="muted" style="margin-bottom:12px">Можно сохранить прогресс в файл и перенести на другой компьютер.</p>
+        <button class="btn" id="export-btn">Скачать прогресс</button>
+        <label class="btn btn-ghost" style="display:inline-block;cursor:pointer">
+          Загрузить прогресс
+          <input type="file" id="import-input" accept=".json" style="display:none">
+        </label>
+        <button class="btn btn-ghost" id="reset-btn" style="margin-left:8px">Сбросить</button>
+      </div>
+    `;
+  },
+  bind() {
+    document.getElementById('export-btn')?.addEventListener('click', () => {
+      const data = JSON.stringify(Storage.load(), null, 2);
+      const blob = new Blob([data], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `infalab-progress-${Date.now()}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+    });
+    document.getElementById('import-input')?.addEventListener('change', e => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = ev => {
+        try {
+          const data = JSON.parse(ev.target.result);
+          Storage.save(data);
+          Progress.updateBadge();
+          App.navigate('profile');
+          Progress.toast('Прогресс загружен');
+        } catch { alert('Некорректный файл'); }
+      };
+      reader.readAsText(file);
+    });
+    document.getElementById('reset-btn')?.addEventListener('click', () => {
+      if (confirm('Сбросить весь прогресс?')) {
+        Storage.reset();
+        Progress.updateBadge();
+        App.navigate('home');
+      }
+    });
+  }
+};
+
+/* ==================== МОДУЛИ ПРАКТИКИ ==================== */
+
+const SearchTrainer = {
+  render(stage) {
+    const task = SEARCH_TASKS[Math.floor(Math.random() * SEARCH_TASKS.length)];
+    this.current = task;
+    stage.innerHTML = `
+      <div class="trainer">
+        <h3>🔍 Поисковый тренажёр</h3>
+        <p class="task-text">${task.task}</p>
+        <input type="text" id="query-input" placeholder='Например: python site:docs.python.org filetype:pdf'>
+        <div class="hints">
+          <span>Операторы:</span>
+          <code>site:</code><code>filetype:</code><code>"..."</code><code>-слово</code>
+        </div>
+        <button class="btn" id="check-query">Проверить запрос</button>
+        <div id="feedback"></div>
+      </div>
+    `;
+    document.getElementById('check-query').addEventListener('click', () => this.check());
+    document.getElementById('query-input').addEventListener('keypress', e => {
+      if (e.key === 'Enter') this.check();
+    });
+  },
+  check() {
+    const query = document.getElementById('query-input').value.toLowerCase().trim();
+    if (!query) return;
+    const t = this.current;
+    let score = 0;
+    const fb = [];
+    t.keywords.forEach(kw => {
+      if (query.includes(kw)) { score += 10; fb.push(`✓ ключевое слово «${kw}»`); }
+      else fb.push(`✗ потеряно «${kw}»`);
+    });
+    (t.operators || []).forEach(op => {
+      if (query.includes(op)) { score += 20; fb.push(`✓ оператор ${op}`); }
+      else fb.push(`✗ стоит использовать ${op}…`);
+    });
+    (t.forbidden || []).forEach(bad => {
+      if (query.includes(bad)) { score -= 5; fb.push(`✗ лишнее «${bad}»`); }
+    });
+    score = Math.max(0, Math.min(100, score));
+    document.getElementById('feedback').innerHTML = `
+      <div class="result">
+        <div class="score-big">${score}%</div>
+        <ul>${fb.map(x => `<li>${x}</li>`).join('')}</ul>
+        <p class="hint">Эталонный запрос: <code>${t.idealQuery}</code></p>
+      </div>
+    `;
+    const s = Storage.load();
+    const prev = s.practice.search?.score || 0;
+    s.practice.search = { score: Math.max(prev, score), attempts: (s.practice.search?.attempts || 0) + 1 };
+    Storage.save(s);
+    Progress.addXP(Math.round(score / 10), 'Поисковый тренажёр');
+  }
+};
+
+const SourceDetective = {
+  render(stage) {
+    const set = SOURCE_SETS[Math.floor(Math.random() * SOURCE_SETS.length)];
+    this.current = set;
+    // Перемешиваем
+    const shuffled = [...set.sources].sort(() => Math.random() - 0.5);
+    stage.innerHTML = `
+      <div class="detective">
+        <h3>🕵️ Детектив источников</h3>
+        <p class="task-text">Тема: <b>${set.topic}</b></p>
+        <p class="muted" style="margin-bottom:10px">Перетащи источники в порядке убывания надёжности (сверху — самый надёжный).</p>
+        <ul class="sources" id="sources-list">
+          ${shuffled.map(s => `
+            <li draggable="true" data-id="${s.id}">
+              <div class="src-title">${s.title}</div>
+              <div class="src-meta">${s.meta}</div>
+            </li>
+          `).join('')}
+        </ul>
+        <button class="btn" id="check-sources">Проверить порядок</button>
+        <div id="feedback"></div>
+      </div>
+    `;
+    this.enableDnD();
+    document.getElementById('check-sources').addEventListener('click', () => this.check());
+  },
+  enableDnD() {
+    const list = document.getElementById('sources-list');
+    let dragged = null;
+    list.addEventListener('dragstart', e => {
+      dragged = e.target.closest('li');
+      if (dragged) dragged.classList.add('dragging');
+    });
+    list.addEventListener('dragend', () => {
+      dragged?.classList.remove('dragging');
+      dragged = null;
+    });
+    list.addEventListener('dragover', e => {
+      e.preventDefault();
+      if (!dragged) return;
+      const after = this.getDragAfter(list, e.clientY);
+      if (after == null) list.appendChild(dragged);
+      else list.insertBefore(dragged, after);
+    });
+  },
+  getDragAfter(container, y) {
+    const items = [...container.querySelectorAll('li:not(.dragging)')];
+    return items.reduce((closest, child) => {
+      const box = child.getBoundingClientRect();
+      const offset = y - box.top - box.height / 2;
+      if (offset < 0 && offset > closest.offset) return { offset, element: child };
+      return closest;
+    }, { offset: -Infinity, element: null }).element;
+  },
+  check() {
+    const order = [...document.querySelectorAll('#sources-list li')].map(li => li.dataset.id);
+    const correct = this.current.correctOrder;
+    let hits = 0;
+    order.forEach((id, i) => { if (id === correct[i]) hits++; });
+    const score = Math.round((hits / correct.length) * 100);
+    const correctTitles = correct.map(id => this.current.sources.find(s => s.id === id).title);
+    document.getElementById('feedback').innerHTML = `
+      <div class="result">
+        <div class="score-big">${score}%</div>
+        <p>Правильный порядок:</p>
+        <ol style="margin-left:20px;margin-top:8px">${correctTitles.map(t => `<li>${t}</li>`).join('')}</ol>
+      </div>
+    `;
+    const s = Storage.load();
+    const prev = s.practice.detective?.score || 0;
+    s.practice.detective = { score: Math.max(prev, score), attempts: (s.practice.detective?.attempts || 0) + 1 };
+    Storage.save(s);
+    Progress.addXP(Math.round(score / 10), 'Детектив источников');
+  }
+};
+
+/* ==================== APP / РОУТЕР ==================== */
+
+const App = {
+  currentView: 'home',
+  views: {
+    home:     { render: () => HomeView.render(),     bind: () => {} },
+    theory:   { render: () => TheoryView.render(),   bind: () => TheoryView.bind() },
+    practice: { render: () => PracticeView.render(), bind: () => PracticeView.bind() },
+    profile:  { render: () => ProfileView.render(),  bind: () => ProfileView.bind() },
+  },
+  navigate(view) {
+    this.currentView = view;
+    document.querySelectorAll('.tabs button').forEach(b => {
+      b.classList.toggle('active', b.dataset.view === view);
+    });
+    const main = document.getElementById('app');
+    main.innerHTML = this.views[view].render();
+    this.views[view].bind();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  },
+  init() {
+    document.querySelectorAll('.tabs button').forEach(btn => {
+      btn.addEventListener('click', () => this.navigate(btn.dataset.view));
+    });
+    Progress.updateBadge();
+    this.navigate('home');
+  }
+};
+
+document.addEventListener('DOMContentLoaded', () => App.init());
+</script>
+</body>
+</html>
