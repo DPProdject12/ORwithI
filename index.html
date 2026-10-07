@@ -244,7 +244,6 @@ textarea{min-height:80px;resize:vertical}
 .stat-card .num.bad{color:var(--danger)}
 .stat-card .lbl{font-size:12px;color:var(--muted);margin-top:4px}
 
-/* Расширенная теория */
 .theory-intro{font-size:15px;line-height:1.7;color:var(--text);background:var(--surface-2);border-left:3px solid var(--accent);padding:12px 16px;border-radius:0 8px 8px 0;margin-bottom:20px}
 .theory-subtitle{font-size:16px;font-weight:700;margin:20px 0 10px;color:var(--text)}
 .theory-section{margin:18px 0;padding:16px 18px;background:var(--surface-2);border-radius:10px;border:1px solid #232735}
@@ -259,7 +258,6 @@ textarea{min-height:80px;resize:vertical}
 .theory-list li{position:relative;padding:6px 0 6px 22px;font-size:14.5px;line-height:1.6}
 .theory-list li::before{content:'›';position:absolute;left:6px;top:5px;color:var(--accent);font-weight:700;font-size:16px}
 
-/* Новые модули */
 .reverseSearch .search-results{list-style:none;margin:14px 0}
 .reverseSearch .search-results li{background:var(--surface-2);border:1px solid #2a3140;border-radius:8px;padding:10px 14px;margin-bottom:6px;font-size:14px}
 .reverseSearch .search-results li .url{color:var(--success);font-size:12px;font-family:monospace}
@@ -337,7 +335,6 @@ textarea{min-height:80px;resize:vertical}
 .ta-options button.correct{background:rgba(74,222,128,.25);border-color:var(--success);color:#fff}
 .ta-options button.wrong{background:rgba(248,113,113,.25);border-color:var(--danger);color:#fff}
 
-/* Приватность */
 .privacy-card{background:var(--surface-2);border-radius:10px;padding:14px;border:1px solid #2a3140;transition:.2s}
 .privacy-card.active{border-color:var(--accent);background:linear-gradient(180deg,var(--surface-2),var(--accent-soft))}
 .privacy-label{display:flex;gap:12px;align-items:flex-start;cursor:pointer}
@@ -613,12 +610,13 @@ const THEORY_DATA = {
   ]
 };
 
+/* ✅ ИСПРАВЛЕНИЯ: m1 (CPU), m3 (двойные кавычки), m4 (БАДы) */
 const QUIZZES = {
   m1: [
     { q:'Что превращает данные в информацию?', options:['Объём','Контекст и интерпретация','Формат файла','Скорость передачи'], correct:1 },
     { q:'Какое свойство означает соответствие задаче?', options:['Достоверность','Полнота','Релевантность','Актуальность'], correct:2 },
     { q:'Устаревшая статистика за 2010 год — какое свойство нарушено?', options:['Полнота','Актуальность','Релевантность','Достоверность'], correct:1 },
-    { q:'Метрика CPU = 95% на сервере — это…', options:['Информация','Данные','Знание','Решение'], correct:1 },
+    { q:'Сырое число 95 в логе сервера без контекста — это…', options:['Информация','Данные','Знание','Решение'], correct:1 },
     { q:'Достоверность информации проверяется…', options:['По количеству просмотров','Сопоставлением с независимыми источниками','По красоте дизайна','По длине текста'], correct:1 },
   ],
   m2: [
@@ -633,12 +631,12 @@ const QUIZZES = {
     { q:'Что сделает запрос "python -snake"?', options:['Найдёт питона-змею','Исключит слово snake','Найдёт оба слова','Ничего'], correct:1 },
     { q:'Как найти PDF-файл?', options:['type:pdf','filetype:pdf','ext:pdf','format:pdf'], correct:1 },
     { q:'Что делает оператор site:?', options:['Ищет в URL','Ищет только на указанном домене','Ищет в заголовке','Ищет файлы'], correct:1 },
-    { q:'Для поиска точной фразы используется…', options:['Квадратные скобки','Кавычки','Звёздочка','Тире'], correct:1 },
+    { q:'Для поиска точной фразы в Google используются…', options:['Квадратные скобки','Двойные кавычки','Звёздочка','Тире'], correct:1 },
   ],
   m4: [
     { q:'Что означает буква «C» в CRAAP?', options:['Content','Currency','Citation','Correctness'], correct:1 },
     { q:'Какой пункт проверяет квалификацию автора?', options:['Currency','Relevance','Authority','Purpose'], correct:2 },
-    { q:'Сайт продаёт БАДы и «доказывает» их пользу — что нарушено?', options:['Currency','Accuracy/Purpose','Relevance','Ничего'], correct:1 },
+    { q:'Сайт продаёт БАДы и «доказывает» их пользу без ссылок на исследования — что нарушено?', options:['Currency','Purpose и Accuracy','Relevance','Ничего'], correct:1 },
     { q:'SIFT-метод — это…', options:['Стиль цитирования','Быстрая проверка фактов','Метрика журнала','Тип лицензии'], correct:1 },
     { q:'Lateral reading — это…', options:['Чтение сайта вдоль','Проверка сайта через другие источники','Чтение вбок','Скорочтение'], correct:1 },
   ],
@@ -710,10 +708,23 @@ const SOURCE_SETS = [
   ]},
 ];
 
+/* ✅ ИСПРАВЛЕНИЕ: разделители внутри блоков (критическая ошибка) */
 const CITATION_TASKS = [
-  { id:'c1', style:'ГОСТ', target:'Иванов И.И. Основы программирования. — М.: Наука, 2023. — 320 с.', blocks:['Иванов И.И.','Основы программирования','М.: Наука','2023','320 с.'], template:'{author} {title}. — {city}: {publisher}, {year}. — {pages} с.', correctOrder:['Иванов И.И.','Основы программирования','М.: Наука','2023','320 с.'] },
-  { id:'c2', style:'IEEE', target:'A. Smith, "Machine Learning Basics," IEEE Trans. Neural Netw., vol. 34, no. 2, pp. 100-115, 2023.', blocks:['A. Smith','Machine Learning Basics','IEEE Trans. Neural Netw.','vol. 34, no. 2','pp. 100-115','2023'], template:'{author}, "{title}," {journal}, {vol}, {pages}, {year}.', correctOrder:['A. Smith','Machine Learning Basics','IEEE Trans. Neural Netw.','vol. 34, no. 2','pp. 100-115','2023'] },
-  { id:'c3', style:'APA', target:'Petrov, P. (2022). Data Structures. Springer. https://doi.org/10.1000/xyz', blocks:['Petrov, P.','(2022)','Data Structures','Springer','https://doi.org/10.1000/xyz'], template:'{author} {year}. {title}. {publisher}. {doi}', correctOrder:['Petrov, P.','(2022)','Data Structures','Springer','https://doi.org/10.1000/xyz'] },
+  { id:'c1', style:'ГОСТ',
+    target:'Иванов И.И. Основы программирования. — М.: Наука, 2023. — 320 с.',
+    blocks:['Иванов И.И.','Основы программирования.','— М.: Наука,','2023.','— 320 с.'],
+    template:'{author} {title} — {city}: {publisher}, {year} — {pages}',
+    correctOrder:['Иванов И.И.','Основы программирования.','— М.: Наука,','2023.','— 320 с.'] },
+  { id:'c2', style:'IEEE',
+    target:'A. Smith, "Machine Learning Basics," IEEE Trans. Neural Netw., vol. 34, no. 2, pp. 100-115, 2023.',
+    blocks:['A. Smith,','"Machine Learning Basics,"','IEEE Trans. Neural Netw.,','vol. 34, no. 2,','pp. 100-115,','2023.'],
+    template:'{author} {title} {journal} {vol} {pages} {year}',
+    correctOrder:['A. Smith,','"Machine Learning Basics,"','IEEE Trans. Neural Netw.,','vol. 34, no. 2,','pp. 100-115,','2023.'] },
+  { id:'c3', style:'APA',
+    target:'Petrov, P. (2022). Data Structures. Springer. https://doi.org/10.1000/xyz',
+    blocks:['Petrov, P.','(2022).','Data Structures.','Springer.','https://doi.org/10.1000/xyz'],
+    template:'{author} {year} {title} {publisher} {doi}',
+    correctOrder:['Petrov, P.','(2022).','Data Structures.','Springer.','https://doi.org/10.1000/xyz'] },
 ];
 
 const CRAAP_ARTICLES = [
@@ -762,15 +773,17 @@ const CRAAP_ARTICLES = [
       { key:'purpose', label:'Purpose', q:'Цель?', options:['Провокация/хайп','Информировать'] },
     ], correct:{ currency:0, authority:0, accuracy:1, purpose:0 },
     verdict:'Автор авторитетный, но заголовок кликбейтный.' },
+  /* ✅ ИСПРАВЛЕНИЕ: добавлен 5-й вопрос про релевантность */
   { title:'Как правильно готовить пасту',
     meta:'Кулинарный сайт · Шеф-повар · Обновлено 2 дня назад.',
     questions:[
       { key:'currency', label:'Currency', q:'Свежесть?', options:['Да, 2 дня назад','Нет'] },
       { key:'authority', label:'Authority', q:'Автор — эксперт?', options:['Да, шеф-повар','Нет'] },
       { key:'accuracy', label:'Accuracy', q:'Рецепт достоверный?', options:['Да','Нет'] },
-      { key:'purpose', label:'Purpose', q:'Релевантно IT?', options:['Нет','Да'] },
-    ], correct:{ currency:0, authority:0, accuracy:0, purpose:0 },
-    verdict:'Хорош для кулинарии, нерелевантен IT.' },
+      { key:'purpose', label:'Purpose', q:'Цель публикации?', options:['Поделиться рецептом','Продать продукт'] },
+      { key:'relevance', label:'Relevance (релевантность)', q:'Релевантно IT-специальности?', options:['Нет','Да'] },
+    ], correct:{ currency:0, authority:0, accuracy:0, purpose:0, relevance:0 },
+    verdict:'Качественный источник для кулинарии, но нерелевантен дисциплине «Основы работы с информацией».' },
 ];
 
 const TEXT_SEARCH_TASKS = [
@@ -843,10 +856,10 @@ const IMG_TASKS = [
 ];
 
 const LICENSE_TASKS = [
-  { id:'l1', desc:'ПО можно использовать, изменять и распространять бесплатно. Производные — под той же лицензией и с открытым кодом.', correct:'GPL', explanation:'GPL — «вирусная» лицензия.' },
-  { id:'l2', desc:'Фото в общественном достоянии. Автор отказался от всех прав.', correct:'CC0', explanation:'CC0 = Public Domain.' },
-  { id:'l3', desc:'Статья свободна, но обязательно указывать автора.', correct:'CC-BY', explanation:'CC-BY требует атрибуции.' },
-  { id:'l4', desc:'JS-библиотека. Разрешено всё, включая коммерческие проекты. Требуется сохранить текст лицензии.', correct:'MIT', explanation:'MIT — самая либеральная.' },
+  { id:'l1', desc:'ПО можно использовать, изменять и распространять бесплатно. Производные — под той же лицензией и с открытым кодом.', correct:'GPL', explanation:'GPL — «вирусная» лицензия: производные тоже должны быть GPL.' },
+  { id:'l2', desc:'Фото в общественном достоянии. Автор отказался от всех прав. Можно всё, даже без указания автора.', correct:'CC0', explanation:'CC0 = Public Domain, полный отказ от прав.' },
+  { id:'l3', desc:'Статья свободна, но обязательно указывать автора и источник.', correct:'CC-BY', explanation:'CC-BY требует атрибуции, но разрешает всё остальное.' },
+  { id:'l4', desc:'JS-библиотека. Разрешено всё, включая коммерческие проекты. Требуется сохранить текст лицензии.', correct:'MIT', explanation:'MIT — самая либеральная: делай что хочешь, сохрани лицензию.' },
   { id:'l5', desc:'Коммерческий редактор. Только по платной подписке. Запрещено декомпилировать.', correct:'Проприетарная', explanation:'Все права у правообладателя.' },
 ];
 const LICENSE_OPTIONS = ['CC0','CC-BY','GPL','MIT','Проприетарная'];
@@ -858,15 +871,18 @@ const PLAGIARISM_CASES = [
   { id:'p4', source:'"Плагиат — это присвоение авторства."', student:'Плагиатом называют присвоение чужого авторства.', correct:'Плагиат', options:['Плагиат','Корректное цитирование','Парафраз'], explanation:'Пересказ близко к тексту без ссылки.' },
 ];
 
+/* ✅ ИСПРАВЛЕНИЕ: уточнено про Австралию */
 const FACT_OPINION_ITEMS = [
   { text:'Москва — столица России.', type:'fact' },
   { text:'Python — лучший язык программирования.', type:'opinion' },
   { text:'Вода кипит при 100°C на уровне моря.', type:'fact' },
   { text:'Удалённая работа повышает продуктивность.', type:'opinion' },
   { text:'Земля вращается вокруг Солнца.', type:'fact' },
-  { text:'Этот фильм — самый скучный.', type:'opinion' },
-  { text:'В 2024 население мира превысило 8 млрд.', type:'fact' },
+  { text:'Этот фильм — самый скучный в истории.', type:'opinion' },
+  { text:'В 2024 году население мира превысило 8 миллиардов.', type:'fact' },
   { text:'Кофе вреден для здоровья.', type:'opinion' },
+  { text:'Австралия — единственная страна, занимающая целый континент.', type:'fact' },
+  { text:'Вкус кофе приятнее, чем вкус чая.', type:'opinion' },
 ];
 
 const CHRONOLOGY_TASKS = [
@@ -899,16 +915,20 @@ const MINDMAP_TASKS = [
     ]},
 ];
 
+/* ✅ ИСПРАВЛЕНИЕ: переформулировано про мёд */
 const FACTCHECK_CLAIMS = [
-  { claim:'Великая Китайская стена видна из космоса невооружённым глазом.', verdict:'Ложь', explanation:'Миф.' },
-  { claim:'Мёд не портится тысячелетиями.', verdict:'Правда', explanation:'Низкая влажность и кислотность.' },
-  { claim:'Человек использует только 10% мозга.', verdict:'Ложь', explanation:'Активен весь мозг.' },
-  { claim:'Вакцины вызывают аутизм.', verdict:'Ложь', explanation:'Опровергнуто, статья отозвана.' },
-  { claim:'Солнце — звезда.', verdict:'Правда', explanation:'Класс G.' },
-  { claim:'Кофеин полностью безопасен в любых дозах.', verdict:'Недостаточно данных', explanation:'Зависит от человека.' },
+  { claim:'Великая Китайская стена видна из космоса невооружённым глазом.', verdict:'Ложь', explanation:'Это распространённый миф. Стена слишком узкая для восприятия с орбиты невооружённым глазом.' },
+  { claim:'Мёд может храниться очень долго благодаря низкой влажности и кислотности.', verdict:'Правда', explanation:'В герметичной таре и при правильной влажности мёд хранится годами и даже десятилетиями. Археологи находили съедобный мёд в древних гробницах.' },
+  { claim:'Человек использует только 10% мозга.', verdict:'Ложь', explanation:'Нейровизуализация показывает активность всего мозга. Миф возник из неверной интерпретации исследований.' },
+  { claim:'Вакцины вызывают аутизм.', verdict:'Ложь', explanation:'Это опровергнутое исследование 1998 года, отозванное журналом Lancet. Автор лишён медицинской лицензии.' },
+  { claim:'Солнце — звезда спектрального класса G.', verdict:'Правда', explanation:'Солнце — жёлтый карлик класса G2V, ближайшая к Земле звезда.' },
+  { claim:'Кофеин полностью безопасен в любых дозах.', verdict:'Ложь', explanation:'В высоких дозах кофеин токсичен: LD50 около 150–200 мг/кг. Безопасная доза индивидуальна.' },
+  { claim:'Кофе продлевает жизнь на 5 лет.', verdict:'Недостаточно данных', explanation:'Есть корреляции между умеренным потреблением кофе и снижением риска некоторых заболеваний, но однозначного вывода о конкретных сроках нет.' },
+  { claim:'Земля плоская.', verdict:'Ложь', explanation:'Форма Земли — геоид, близкий к эллипсоиду. Это подтверждено множеством независимых измерений.' },
 ];
 const FACTCHECK_OPTIONS = ['Правда','Ложь','Недостаточно данных'];
 
+/* ✅ ИСПРАВЛЕНИЕ: уточнена монография */
 const SOURCE_TYPE_ITEMS = [
   { text:'Оригинальная статья в Nature', type:'Первичный' },
   { text:'Учебник по информатике', type:'Вторичный' },
@@ -917,15 +937,16 @@ const SOURCE_TYPE_ITEMS = [
   { text:'Обзор в Cochrane Library', type:'Вторичный' },
   { text:'Библиографический указатель', type:'Третичный' },
   { text:'Протокол эксперимента', type:'Первичный' },
-  { text:'Монография с анализом', type:'Вторичный' },
+  { text:'Монография-обзор с анализом чужих исследований', type:'Вторичный' },
 ];
 const SOURCE_TYPE_OPTIONS = ['Первичный','Вторичный','Третичный'];
 
 const MANIPULATION_ITEMS = [
-  { text:'"Все уже это знают! Неужели ты ещё не купил?"', type:'Апелляция к большинству', options:['Апелляция к большинству','Ложная дилемма','Подмена тезиса','Ad hominem'] },
+  { text:'"Все уже это знают! Неужели ты ещё не купил наш продукт?"', type:'Апелляция к большинству', options:['Апелляция к большинству','Ложная дилемма','Подмена тезиса','Ad hominem'] },
   { text:'"Либо ты с нами, либо против нас."', type:'Ложная дилемма', options:['Апелляция к большинству','Ложная дилемма','Подмена тезиса','Ad hominem'] },
-  { text:'"Не слушайте его — он же ничего не понимает."', type:'Ad hominem', options:['Апелляция к большинству','Ложная дилемма','Подмена тезиса','Ad hominem'] },
-  { text:'"Вы о налогах? А в 90-е зарплату не платили."', type:'Подмена тезиса', options:['Апелляция к большинству','Ложная дилемма','Подмена тезиса','Ad hominem'] },
+  { text:'"Не слушайте его — он же ничего не понимает в этой теме."', type:'Ad hominem', options:['Апелляция к большинству','Ложная дилемма','Подмена тезиса','Ad hominem'] },
+  { text:'"Вы против цензуры? Значит, вы за то, чтобы дети видели весь этот ужас в интернете?"', type:'Подмена тезиса', options:['Апелляция к большинству','Ложная дилемма','Подмена тезиса','Ad hominem'] },
+  { text:'"После введения нового регламента продажи упали. Значит, регламент виноват."', type:'Post hoc', options:['Апелляция к большинству','Ложная дилемма','Подмена тезиса','Post hoc'] },
 ];
 
 const NOISE_TASKS = [
@@ -1231,6 +1252,7 @@ const RED_FLAGS_TASKS = [
   },
 ];
 
+/* ✅ ИСПРАВЛЕНИЕ: улучшены дистракторы */
 const COMPARE_SOURCES_TASKS = [
   {
     id:'cs1',
@@ -1239,7 +1261,12 @@ const COMPARE_SOURCES_TASKS = [
       { label:'Источник A', text:'"Микросервисы позволяют масштабировать команды и системы. В нашем опыте мы перешли с монолита и сократили время релиза на 40%. Опыт — 30 команд, 3 года. Опубликовано в IEEE Software, 2023."' },
       { label:'Источник B', text:'"Микросервисы — это будущее! Все крупные компании уже перешли. Не отставайте! Записывайтесь на наш курс по архитектуре."' },
     ],
-    options:['Источник A — есть данные, методология, рецензируемое издание','Источник B — он более эмоциональный','Оба одинаково достоверны','Недостаточно данных'],
+    options:[
+      'Источник A — есть данные, методология, рецензируемое издание',
+      'Источник B — свежее, а значит актуальнее',
+      'Оба одинаково достоверны, так как описывают одно и то же',
+      'Недостаточно данных для вывода',
+    ],
     correct:0,
     explanation:'Источник A содержит конкретные данные, описание выборки и опубликован в рецензируемом издании. Источник B — реклама без данных.'
   },
@@ -1250,12 +1277,18 @@ const COMPARE_SOURCES_TASKS = [
       { label:'Источник A', text:'"Кофе полезен для сердца. Так сказал мой знакомый врач." — блог о здоровом образе жизни.' },
       { label:'Источник B', text:'"Систематический обзор 50 исследований (n=300 000) показал: умеренное потребление кофе (2-3 чашки) ассоциировано со снижением риска сердечно-сосудистых заболеваний на 15%." — The BMJ, 2023.' },
     ],
-    options:['Источник B — систематический обзор с большой выборкой','Источник A — потому что врач','Оба одинаково достоверны','Недостаточно данных'],
+    options:[
+      'Источник B — систематический обзор с большой выборкой',
+      'Источник A — потому что врач',
+      'Оба одинаково достоверны',
+      'Недостаточно данных',
+    ],
     correct:0,
     explanation:'Источник B — систематический обзор в авторитетном журнале с большой выборкой. Источник A — личное мнение без данных.'
   },
 ];
 
+/* ✅ ИСПРАВЛЕНИЕ: убран дубль про препринт, добавлен вопрос про h-index */
 const EXAM_QUESTIONS = [
   { q:'Что превращает данные в информацию?', options:['Объём','Контекст','Формат файла','Скорость'], correct:1 },
   { q:'Какое свойство нарушено у статистики 2010 года?', options:['Полнота','Актуальность','Релевантность','Достоверность'], correct:1 },
@@ -1264,7 +1297,7 @@ const EXAM_QUESTIONS = [
   { q:'Что делает оператор site:?', options:['Ищет в URL','Ограничивает домен','Ищет файлы','Ищет в заголовке'], correct:1 },
   { q:'Как искать точную фразу?', options:['Квадратные скобки','Кавычки','Звёздочка','Тире'], correct:1 },
   { q:'Что означает C в CRAAP?', options:['Content','Currency','Citation','Correctness'], correct:1 },
-  { q:'SIFT — это…', options:['Стиль','Быстрая проверка','Метрика','Лицензия'], correct:1 },
+  { q:'SIFT — это…', options:['Стиль','Быстрая проверка фактов','Метрика','Лицензия'], correct:1 },
   { q:'Что такое IMRaD?', options:['Стиль','Структура статьи','База данных','Метрика'], correct:1 },
   { q:'Что такое DOI?', options:['Индекс','Идентификатор публикации','Журнал','Автор'], correct:1 },
   { q:'Плагиат — это…', options:['Парафраз','Цитирование','Чужое без ссылки','Реферирование'], correct:2 },
@@ -1272,29 +1305,30 @@ const EXAM_QUESTIONS = [
   { q:'MIT-лицензия требует…', options:['Открывать код','Сохранить лицензию','Запрет коммерции','Указать автора'], correct:1 },
   { q:'Первичный источник — это…', options:['Учебник','Оригинал','Энциклопедия','Блог'], correct:1 },
   { q:'Где лучше искать код?', options:['Google','GitHub','Facebook','YouTube'], correct:1 },
-  { q:'Сколько % времени поиск теряется из-за плохих запросов?', options:['10%','50%','90%','100%'], correct:2 },
-  { q:'Что такое lateral reading?', options:['Чтение вбок','Проверка сайта через другие источники','Скорочтение','Пересказ'], correct:1 },
+  { q:'Lateral reading — это…', options:['Чтение вбок','Проверка сайта через другие источники','Скорочтение','Пересказ'], correct:1 },
   { q:'CC-BY требует…', options:['Указать автора','Запретить изменение','Некоммерческое','Открыть код'], correct:0 },
   { q:'Ложная дилемма — это…', options:['Обобщение','Только два варианта','Ошибка выборки','Подмена тезиса'], correct:1 },
+  { q:'Что такое h-index?', options:['Метрика продуктивности учёного','Индекс журнала','Тип лицензии','Формат ссылки'], correct:0 },
   { q:'Где искать научные статьи?', options:['Habr','arXiv','Pikabu','VK'], correct:1 },
 ];
 
+/* ✅ ИСПРАВЛЕНИЕ: патент → «Вторичный» вместо «Третичный» */
 const TIME_ATTACK_QUESTIONS = [
   { q:'Официальная документация — это…', options:['Первичный источник','Вторичный источник'], correct:0 },
   { q:'Stack Overflow — это…', options:['Первичный источник','Вторичный источник'], correct:1 },
-  { q:'"python -snake" — что сделает минус?', options:['Исключит snake','Найдёт snake','Заменит слово','Ничего'], correct:0 },
-  { q:'site: ограничивает поиск…', options:['Доменом','Заголовком','Датами','Языком'], correct:0 },
-  { q:'CC0 — это…', options:['Public Domain','Атрибуция','Некоммерческое','Запрет'], correct:0 },
-  { q:'CC-BY требует…', options:['Указать автора','Открыть код','Запрет коммерции','Ничего'], correct:0 },
-  { q:'GPL — это…', options:['Копилефт','Либеральная','Проприетарная','CC-лицензия'], correct:0 },
-  { q:'MIT — это…', options:['Копилефт','Либеральная','Проприетарная','CC-лицензия'], correct:1 },
-  { q:'Файл — это…', options:['Первичный','Вторичный','Третичный','Не источник'], correct:0 },
-  { q:'Плагиат — это…', options:['Чужое без ссылки','Свой текст','Парафраз','Цитата'], correct:0 },
-  { q:'"Точная фраза" ищется в…', options:['Кавычках','Скобках','Звёздочках','Скобках'], correct:0 },
-  { q:'DOI — это…', options:['Идентификатор','Индекс','Автор','Журнал'], correct:0 },
-  { q:'Что означает P в CRAAP?', options:['Purpose','Price','Publication','Peer'], correct:0 },
-  { q:'Что такое preprint?', options:['До рецензии','Финальная','Обзор','Тезисы'], correct:0 },
-  { q:'filetype:pdf ищет…', options:['PDF','Word','Excel','Любое'], correct:0 },
+  { q:'"python -snake" — что сделает минус?', options:['Исключит snake','Найдёт snake'], correct:0 },
+  { q:'site: ограничивает поиск…', options:['Доменом','Заголовком'], correct:0 },
+  { q:'CC0 — это…', options:['Public Domain','Атрибуция'], correct:0 },
+  { q:'GPL — это…', options:['Копилефт','Либеральная'], correct:0 },
+  { q:'MIT — это…', options:['Копилефт','Либеральная'], correct:1 },
+  { q:'Патент — это…', options:['Первичный источник','Вторичный источник'], correct:0 },
+  { q:'Плагиат — это…', options:['Чужое без ссылки','Свой текст'], correct:0 },
+  { q:'"Точная фраза" ищется в…', options:['Кавычках','Скобках'], correct:0 },
+  { q:'DOI — это…', options:['Идентификатор публикации','Индекс цитирования'], correct:0 },
+  { q:'P в CRAAP — это…', options:['Purpose','Price'], correct:0 },
+  { q:'Preprint — это…', options:['До рецензии','Финальная версия'], correct:0 },
+  { q:'filetype:pdf ищет…', options:['PDF','Word'], correct:0 },
+  { q:'Рецензирование статьи — это…', options:['Проверка экспертами','Публикация в блоге'], correct:0 },
 ];
 
 const BADGES = [
@@ -1314,13 +1348,37 @@ const BADGES = [
 ];
 
 /* ============================================================
-   2. STORAGE — с поддержкой приватного режима
+   2. STORAGE
    ============================================================ */
 
 const Storage = {
-  KEY: 'infalab_v7_state',
-  USER_KEY: 'infalab_v7_user',
-  MODE_KEY: 'infalab_v7_storage_mode',
+  KEY: 'infalab_v72_state',
+  USER_KEY: 'infalab_v72_user',
+  MODE_KEY: 'infalab_v72_storage_mode',
+  SESSION_ID_KEY: 'infalab_v72_session_id',
+
+  initSession(){
+    const mode = this.getMode();
+    if (mode !== 'session') return;
+
+    const currentSessionId = this._generateId();
+    const savedSessionId = sessionStorage.getItem(this.SESSION_ID_KEY);
+
+    if (!savedSessionId || savedSessionId !== currentSessionId){
+      const hasState = sessionStorage.getItem(this.KEY);
+      if (!savedSessionId && hasState){
+        sessionStorage.setItem(this.SESSION_ID_KEY, currentSessionId);
+        return;
+      }
+      sessionStorage.removeItem(this.KEY);
+      sessionStorage.removeItem(this.USER_KEY);
+      sessionStorage.setItem(this.SESSION_ID_KEY, currentSessionId);
+    }
+  },
+
+  _generateId(){
+    return 's_' + Date.now() + '_' + Math.random().toString(36).slice(2, 9);
+  },
 
   getMode(){
     const mode = localStorage.getItem(this.MODE_KEY);
@@ -1339,10 +1397,12 @@ const Storage = {
     localStorage.removeItem(this.USER_KEY);
     sessionStorage.removeItem(this.KEY);
     sessionStorage.removeItem(this.USER_KEY);
+    sessionStorage.removeItem(this.SESSION_ID_KEY);
 
     if (mode === 'session'){
       sessionStorage.setItem(this.KEY, JSON.stringify(state));
       if (user) sessionStorage.setItem(this.USER_KEY, JSON.stringify(user));
+      sessionStorage.setItem(this.SESSION_ID_KEY, this._generateId());
     } else {
       localStorage.setItem(this.KEY, JSON.stringify(state));
       if (user) localStorage.setItem(this.USER_KEY, JSON.stringify(user));
@@ -2007,8 +2067,11 @@ const ProfileView = {
 
     document.getElementById('wipe-now')?.addEventListener('click', ()=>{
       if (confirm('Стереть все данные прямо сейчас? Это действие необратимо.')){
-        Storage.reset();
-        Storage.clearUser();
+        sessionStorage.removeItem(Storage.KEY);
+        sessionStorage.removeItem(Storage.USER_KEY);
+        sessionStorage.removeItem(Storage.SESSION_ID_KEY);
+        localStorage.removeItem(Storage.KEY);
+        localStorage.removeItem(Storage.USER_KEY);
         Progress.updateBadge();
         UserUI.refresh();
         App.navigate('home');
@@ -2205,7 +2268,7 @@ const CitationTrainer = {
         <h3>📚 Конструктор ссылок · ${this.current.style}</h3>
         <div id="timer-zone"></div>
         <p class="task-text">Собери правильную библиографическую ссылку.</p>
-        <p class="muted" style="font-size:13px;margin-bottom:8px">Шаблон: <code>${this.current.template}</code></p>
+        <p class="muted" style="font-size:13px;margin-bottom:8px">Собирай блоки в правильном порядке.</p>
         <div class="cite-preview" id="cite-preview">— кликни блоки ниже —</div>
         <div class="cite-blocks" id="cite-blocks">
           ${shuffled.map((b,i)=>`<button data-block="${i}" data-text="${b}">${b}</button>`).join('')}
@@ -3906,6 +3969,7 @@ const App = {
     window.scrollTo({ top:0, behavior:'smooth' });
   },
   init(){
+    Storage.initSession();
     document.querySelectorAll('.tabs button').forEach(btn=>{
       btn.addEventListener('click', ()=>this.navigate(btn.dataset.view));
     });
